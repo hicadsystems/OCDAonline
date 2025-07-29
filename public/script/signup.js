@@ -1,5 +1,5 @@
 const isLocal = window.location.hostname === 'localhost';
-const BASE_URL = isLocal ? 'http://localhost:5500' : 'https://chief-prj-assign.onrender.com';
+const BASE_URL = isLocal ? 'http://localhost:5500' : 'https://oyinakokocda.org';
 
   function showForm(formType) {
     const signupForm = document.getElementById('signupForm');
@@ -242,6 +242,15 @@ const BASE_URL = isLocal ? 'http://localhost:5500' : 'https://chief-prj-assign.o
     }
   });
 
+  document.addEventListener('DOMContentLoaded', function () {
+    const checkbox = document.getElementById('acceptRules');
+    const submitBtn = document.getElementById('submitBtn');
+
+    checkbox.addEventListener('change', function () {
+      submitBtn.disabled = !checkbox.checked;
+    });
+  });
+
 
   // Export function to get user data (for database integration)
   window.getUserData = function() {
@@ -365,6 +374,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Error loading states:', err);
   }
 });
-
-
-

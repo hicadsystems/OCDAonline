@@ -303,7 +303,7 @@ router.get('/monthlysummary', verifyToken, async (req, res) => {
   // GET /admin/ocdaexpenses
 router.get('/ocdaexpenses', verifyToken, async (req, res) => {
   try {
-    const result = await request('SELECT docdate, project, remarks, amount FROM ocdaexpenses').run();
+    const result = await request('SELECT docdate, project, remarks, voucher, amount FROM ocdaexpenses').run();
     res.json(result.recordset);
   } catch (err) {
     console.error('Error fetching OCDA expenses:', err);
@@ -348,10 +348,10 @@ router.post('/createmember', verifyToken, async (req, res) => {
 
         // Prepare the inputs object with cleaned values
         const memberInputs = {
-            PhoneNumber: clean(PhoneNumber), // Assuming PhoneNumber is required and not empty
+            PhoneNumber: clean(PhoneNumber), 
             phoneno2: clean(phoneno2),
             email: clean(email),
-            Password: clean(Password), // Remember to hash passwords before storing in a real application!
+            Password: clean(Password), 
             Surname: clean(Surname),
             othernames: clean(othernames),
             Title: clean(Title),
@@ -361,12 +361,12 @@ router.post('/createmember', verifyToken, async (req, res) => {
             Ward: clean(Ward),
             State: clean(State),
             Town: clean(Town),
-            DOB: DOB, // DOB should ideally be a Date object or valid date string
+            DOB: DOB, 
             Qualifications: clean(Qualifications),
             Profession: clean(Profession),
-            exitdate: exitdate, // exitdate should ideally be a Date object or valid date string, or null
-            CreatedAt: new Date(), // Set creation timestamp
-            createdby: req.adminId // Assuming req.adminId is set by verifyToken middleware
+            exitdate: exitdate || '', 
+            CreatedAt: new Date(), 
+            createdby: req.adminId 
         };
 
         await request(`
@@ -421,7 +421,7 @@ router.post('/generate-summary', verifyToken, async (req, res) => {
       return res.status(400).json({ message: 'You can only generate summary for the previous or earlier months.' });
     }
 
-    // 🔍 Check if summary already exists
+    // Check if summary already exists
     const exists = await request('SELECT 1 FROM monthlysummary WHERE period = @period')
       .inputs({ period })
       .run();
@@ -620,16 +620,31 @@ router.put('/member/:phone', verifyToken, async (req, res) => {
 router.post('/ledger-entry/:phoneno', verifyToken, async (req, res) => {
   const { phoneno } = req.params;
   const { transdate, amount, remark } = req.body;
-
+  
   try {
-    await request(`INSERT INTO memberledger(phoneno, transdate, amount, remark, paydate)
-      VALUES (@phoneno, @transdate, @amount, @remark, CURRENT_DATE)`)
-      .inputs({phoneno, transdate, amount, remark})
+    // First, check if the phone number exists in the members table
+    const memberCheck = await request(`SELECT PhoneNumber FROM members WHERE PhoneNumber = @phoneno`)
+      .inputs({phoneno})
       .run();
-
+    
+    // If no member found with this phone number
+    if (memberCheck.recordset.length === 0) {
+      return res.status(400).json({ 
+        field: 'phoneno',
+        message: 'Member does not exist'
+      });
+    }
+    
+    // If member exists, proceed with ledger entry
+    await request(`INSERT INTO memberledger(phoneno, transdate, amount, remark, paydate, created_by)
+      VALUES (@phoneno, @transdate, @amount, @remark, CURRENT_DATE, @created_by)`)
+      .inputs({phoneno, transdate, amount, remark, created_by: req.adminId})
+      .run();
+      
     res.status(200).json({ message: 'Ledger entry recorded successfully' });
+    
   } catch (err) {
-    console.error('Ledger insert error:', err);
+    console.error('Ledger operation error:', err);
     res.status(500).json({ message: 'Failed to record ledger entry' });
   }
 });
@@ -656,25 +671,25 @@ router.get('/api/ledger-entry/:phoneno', verifyToken, async (req, res) => {
   }
 });
 
-// Add Expense with user-supplied date and project
+// Add Expense 
 router.post('/ocdaexpenses', verifyToken, async (req, res) => {
   try {
-    const { docdate, project, amount, remarks } = req.body;
+    const { docdate, project, amount, remarks, voucher } = req.body;
 
     if (!docdate || !project || amount == null || !remarks) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
     const result = await request(`
-      INSERT INTO ocdaexpenses (docdate, project, remarks, amount)
-      VALUES (@docdate, @project, @remarks, @amount)
+      INSERT INTO ocdaexpenses (docdate, project, remarks, amount, voucher, created_by)
+      VALUES (@docdate, @project, @remarks, @amount, @voucher, @created_by)
     `)
-    .inputs({ docdate, project, remarks, amount })
+    .inputs({ docdate, project, remarks, amount, voucher, created_by: req.adminId })
     .run();
 
     res.status(201).json({
       success: true,
-      message: 'OCDA expense saved successfully',
+      message: 'OCDA expense recorded successfully',
       rowsAffected: result.rowsAffected[0]
     });
   } catch (err) {
@@ -1060,7 +1075,7 @@ router.get('/static/:type', async (req, res) => {
   
   // Predefined safe configuration
   const tableMap = {
-    titles: { table: 'Title', columns: ['title'] },
+    titles: { table: 'title', columns: ['title'] },
     qualifications: { table: 'qualfication', columns: ['qualification'] },
     wards: { table: 'oyinwards', columns: ['ward', 'Quarter'] },
     hontitles: { table: 'hontitle', columns: ['Htitle', 'titlerank'] },
@@ -1101,7 +1116,7 @@ router.get('/static/states', async (req, res) => {
 // --- POST (Add) ---
 const tableMap = {
   titles: {
-    table: 'Title',
+    table: 'title',
     columns: ['title']
   },
   qualifications: {
@@ -1118,7 +1133,6 @@ const tableMap = {
   }
 };
 
-// --- POST ---
 router.post('/static/:type', async (req, res) => {
   const { type } = req.params;
   const config = tableMap[type];
@@ -1456,7 +1470,7 @@ router.get('/ocda-expenses-analysis', verifyToken, async (req, res) => {
         SELECT 
           e.project AS code,
           s.expsdesc AS description,
-          FORMAT(e.docdate, 'yyyy-MM-dd') AS date, 
+          DATE_FORMAT(e.docdate, '%Y-%m-%d') AS date, 
           e.remarks AS remark, 
           e.amount
         FROM ocdaexpenses e
@@ -1479,39 +1493,38 @@ router.get('/ocda-income-analysis', verifyToken, async (req, res) => {
   try {
     const { start, end, code = 'ALL', mode = 'summary' } = req.query;
     const whereConditions = [];
-    const params = {}; // This object will hold our named parameters
+    const params = {}; 
 
     console.log('--- Debugging Parameter Issues (Admin.js) ---');
-    console.log('1. Original code from req.query:', code); // E.g., '%4010' or '@10'
+    console.log('1. Original code from req.query:', code);
 
     let decodedCode = code;
     if (code !== 'ALL') {
         try {
-            decodedCode = decodeURIComponent(code); // Ensure it's decoded for the parameter value
+            decodedCode = decodeURIComponent(code); 
         } catch (e) {
             console.warn("Failed to decode 'code' parameter:", code, e);
             decodedCode = code;
         }
     }
-    console.log('2. Decoded code (before adding wildcards):', decodedCode); // Should be '@10' if original was '%4010'
-
+    console.log('2. Decoded code (before adding wildcards):', decodedCode); 
 
     if (start) {
-      whereConditions.push(`ml.transdate >= @start`); // Use named parameter
+      whereConditions.push(`ml.transdate >= @start`);
       params.start = start;
     }
     if (end) {
-      whereConditions.push(`ml.transdate <= @end`); // Use named parameter
+      whereConditions.push(`ml.transdate <= @end`); 
       params.end = end;
     }
     if (decodedCode !== 'ALL') {
-      whereConditions.push(`ml.remark LIKE @code`); // Use named parameter
-      params.code = `%${decodedCode}%`; // Add wildcards to the parameter value
+      whereConditions.push(`ml.remark LIKE @code`);
+      params.code = `%${decodedCode}%`; 
     }
 
     const whereClause = whereConditions.length ? `WHERE ${whereConditions.join(' AND ')}` : '';
 
-    console.log('3. Final params object sent to db-wrapper:', params); // Should be { code: '%@10%' } etc.
+    console.log('3. Final params object sent to db-wrapper:', params); 
     console.log('--- End Debugging Parameter Issues (Admin.js) ---');
 
     let result;
@@ -1519,18 +1532,19 @@ router.get('/ocda-income-analysis', verifyToken, async (req, res) => {
     if (mode === 'summary') {
       const query = `
         SELECT
-          ml.remark AS code,
-          IFNULL(ic.incomedesc, 'No Description') AS description,
+          IFNULL(ic.incomecode, 'No Code') AS code,
+          ml.remark AS description,
           SUM(ml.amount) AS amount,
           COUNT(*) AS transaction_count
         FROM memberledger ml
-        LEFT JOIN incomeclassification ic ON ml.remark = ic.incomecode
+        LEFT JOIN incomeclassification ic ON ml.remark = ic.incomedesc
         ${whereClause}
-        GROUP BY ml.remark, ic.incomedesc
-        ORDER BY ml.remark`;
+        GROUP BY ml.remark, ic.incomecode
+        ORDER BY ic.incomecode
+      `;
 
-      console.log('Summary Query being sent:', query); // Check the final SQL string
-      console.log('Summary Params object being sent:', params); // Double check parameters here
+      console.log('Summary Query being sent:', query); 
+      console.log('Summary Params object being sent:', params);
 
       // Pass the 'params' object to .inputs()
       result = await request(query).inputs(params).run();
@@ -1654,7 +1668,7 @@ router.post('/notices', verifyToken, async (req, res) => {
 
   try {
     await request(`
-      INSERT INTO Notices (title, content, type, created_by)
+      INSERT INTO notices (title, content, type, created_by)
       VALUES (@title, @content, @type, @created_by)
     `)
     .inputs({ title, content, type, created_by })
@@ -1673,7 +1687,7 @@ router.get('/notices', async (req, res) => {
   try {
     
     const result = await request
-      `SELECT id, title, content, type, created_at FROM Notices ORDER BY created_at DESC`.run();
+      `SELECT id, title, content, type, created_at FROM notices ORDER BY created_at DESC`.run();
     res.json(result.recordset);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch notices/events' });
@@ -1691,7 +1705,7 @@ router.put('/notices/:id', verifyToken, async (req, res) => {
 
   try {
     const result = await request(`
-      UPDATE Notices 
+      UPDATE notices 
       SET title = @title, content = @content, type = @type
       WHERE id = @id
     `)
@@ -1715,7 +1729,7 @@ router.delete('/notices/:id', verifyToken, async (req, res) => {
   try {
      const {id} = req.params;
     const result = await request
-    `DELETE FROM Notices WHERE id = @id`
+    `DELETE FROM notices WHERE id = @id`
       .inputs({id})
       .run();
       
@@ -1808,6 +1822,64 @@ router.put('/change-phone', verifyToken, async (req, res) => {
         }
         res.status(500).json({ message: 'Server error.' });
     }
+});
+
+router.put('/merge-phone', verifyToken, async (req, res) => {
+  const { firstPhone, secondPhone } = req.body;
+
+  if (!firstPhone || !secondPhone || firstPhone === secondPhone) {
+    return res.status(400).json({ message: 'Both phone numbers are required and must be different.' });
+  }
+
+  let connection; // For managing transaction safely
+
+  try {
+    // --- Step 1: Check if both phone numbers exist ---
+    const checkPhones = await request(`
+      SELECT PhoneNumber FROM members WHERE PhoneNumber IN (@firstPhone, @secondPhone)
+    `)
+    .inputs({ firstPhone, secondPhone })
+    .run();
+
+    if (checkPhones.recordset.length < 2) {
+      return res.status(404).json({ message: 'One or both phone numbers not found in members table.' });
+    }
+
+    // --- Step 2: Start transaction ---
+    connection = await pool.getConnection();
+    await connection.beginTransaction();
+
+    try {
+      // --- Step 3: Reassign memberledger entries from second to first ---
+      const updateLedgerQuery = `
+        UPDATE memberledger SET phoneno = ? WHERE phoneno = ?
+      `;
+      await connection.execute(updateLedgerQuery, [firstPhone, secondPhone]);
+
+      // --- Step 4: Delete second phone from members ---
+      const deleteSecondMember = `
+        DELETE FROM members WHERE PhoneNumber = ?
+      `;
+      await connection.execute(deleteSecondMember, [secondPhone]);
+
+      // --- Step 5: Commit transaction ---
+      await connection.commit();
+      res.status(200).json({ message: 'Phone numbers merged successfully.' });
+
+    } catch (transactionErr) {
+      await connection.rollback();
+      console.error('Merge Transaction Error:', transactionErr);
+      res.status(500).json({ message: 'Transaction failed. Changes rolled back.' });
+
+    } finally {
+      if (connection) connection.release();
+    }
+
+  } catch (err) {
+    console.error('Merge Phone Server Error:', err);
+    if (connection) connection.release();
+    res.status(500).json({ message: 'Server error.' });
+  }
 });
 
 module.exports = router;

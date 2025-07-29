@@ -1,5 +1,5 @@
 const isLocal = window.location.hostname === 'localhost';
-const BASE_URL = isLocal ? 'http://localhost:5500' : 'https://chief-prj-assign.onrender.com';
+const BASE_URL = isLocal ? 'http://localhost:5500' : 'https://oyinakokocda.org';
 
   document.addEventListener('DOMContentLoaded', function () {
     const role = localStorage.getItem('adminRole');
@@ -292,67 +292,76 @@ async function loadAdmins() {
     }
 
     const table = `
-      <table class="w-full text-left border border-collapse">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="p-2 border">#</th>
-            <th class="p-2 border">Full Name</th>
-            <th class="p-2 border">Email</th>
-            <th class="p-2 border">Role</th>
-            <th class="p-2 border">Status</th>
-            <th class="p-2 border">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${admins.map((admin, index) => `
-            <tr>
-              <td class="p-2 border">${index + 1}</td>
-              <td class="p-2 border">${admin.fullname}</td>
-              <td class="p-2 border">${admin.email}</td>
-              <td class="p-2 border">${admin.role}</td>
-              <td class="p-2 border">${admin.active == 1 || admin.active === '1' ? 'Active' : 'Inactive'}</td>
-              <td class="p-2 border">
-                <!-- Desktop Buttons (≥ md) -->
-                <div class="hidden md:flex gap-1">
-                  <button onclick="toggleAdminStatus('${admin.Id}', ${admin.active})" class="px-2 py-1 rounded ${admin.active ? 'bg-yellow-500' : 'bg-green-500'} text-white text-xs">
-                    ${admin.active ? 'Deactivate' : 'Activate'}
-                  </button>
-                  <button class="px-2 py-1 bg-blue-600 text-white rounded text-xs edit-admin-btn"
-                    data-id="${admin.Id}"
-                    data-fullname="${admin.fullname}"
-                    data-email="${admin.email}"
-                    data-role="${admin.role}">
-                    Edit
-                  </button>
-                  <button onclick="deleteAdmin('${admin.Id}')" class="px-2 py-1 bg-red-600 text-white rounded text-xs">Delete</button>
-                </div>
-
-                <!-- Mobile 3-dot menu (< md) -->
-                <div class="relative inline-block md:hidden">
-                  <button onclick="toggleMenu(this)" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
-                    <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M6 10a2 2 0 114.001-.001A2 2 0 016 10zm4 0a2 2 0 114.001-.001A2 2 0 0110 10zm4 0a2 2 0 114.001-.001A2 2 0 0114 10z" />
-                    </svg>
-                  </button>
-                  <div class="hidden absolute right-0 z-10 mt-2 w-36 bg-white border rounded-lg shadow-md">
-                    <button onclick="toggleAdminStatus('${admin.Id}', ${admin.active})" class="w-full text-left px-4 py-2 text-sm ${admin.active ? 'bg-yellow-500' : 'bg-green-500'}  hover:bg-gray-100">
+      <div class="overflow-x-hidden max-w-full">
+        <table class="w-full text-left border border-collapse table-auto">
+          <thead>
+            <tr class="bg-gray-200 text-xs sm:text-sm">
+              <th class="p-2 border">#</th>
+              <th class="p-2 border">Full Name</th>
+              <th class="p-2 border">Email</th>
+              <th class="p-2 border">Role</th>
+              <th class="p-2 border">Status</th>
+              <th class="p-2 border">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${admins.map((admin, index) => `
+              <tr class="text-xs sm:text-sm">
+                <td class="p-2 border">${index + 1}</td>
+                <td class="p-2 border break-words">${admin.fullname}</td>
+                <td class="p-2 border email-wrap">${admin.email}</td>
+                <td class="p-2 border">${admin.role}</td>
+                <td class="p-2 border">${admin.active == 1 || admin.active === '1' ? 'Active' : 'Inactive'}</td>
+                <td class="p-2 border">
+                  <!-- Desktop Buttons -->
+                  <div class="hidden md:flex gap-1 flex-wrap">
+                    <button onclick="toggleAdminStatus('${admin.Id}', ${admin.active})"
+                      class="px-2 py-1 rounded ${admin.active ? 'bg-yellow-500' : 'bg-green-500'} text-white text-xs">
                       ${admin.active ? 'Deactivate' : 'Activate'}
                     </button>
-                    <button class="w-full text-left px-4 py-2 text-sm text-blue-700 hover:bg-gray-100 edit-admin-btn"
+                    <button class="px-2 py-1 bg-blue-600 text-white rounded text-xs edit-admin-btn"
                       data-id="${admin.Id}"
                       data-fullname="${admin.fullname}"
                       data-email="${admin.email}"
                       data-role="${admin.role}">
                       Edit
                     </button>
-                    <button onclick="deleteAdmin('${admin.Id}')" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">Delete</button>
+                    <button onclick="deleteAdmin('${admin.Id}')" class="px-2 py-1 bg-red-600 text-white rounded text-xs">
+                      Delete
+                    </button>
                   </div>
-                </div>
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>`;
+
+                  <!-- Mobile Menu -->
+                  <div class="relative inline-block md:hidden">
+                    <button onclick="toggleMenu(this)" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+                      <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M6 10a2 2 0 114.001-.001A2 2 0 016 10zm4 0a2 2 0 114.001-.001A2 2 0 0110 10zm4 0a2 2 0 114.001-.001A2 2 0 0114 10z" />
+                      </svg>
+                    </button>
+                    <div class="hidden absolute right-0 z-10 mt-2 w-36 bg-white border rounded-lg shadow-md">
+                      <button onclick="toggleAdminStatus('${admin.Id}', ${admin.active})"
+                        class="w-full text-left px-4 py-2 text-sm ${admin.active ? 'bg-yellow-500' : 'bg-green-500'} hover:bg-gray-100">
+                        ${admin.active ? 'Deactivate' : 'Activate'}
+                      </button>
+                      <button class="w-full text-left px-4 py-2 text-sm text-blue-700 hover:bg-gray-100 edit-admin-btn"
+                        data-id="${admin.Id}"
+                        data-fullname="${admin.fullname}"
+                        data-email="${admin.email}"
+                        data-role="${admin.role}">
+                        Edit
+                      </button>
+                      <button onclick="deleteAdmin('${admin.Id}')" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
     document.getElementById('adminTable').innerHTML = table;
   } catch (err) {
     console.error('Admin Load Error:', err);
@@ -491,43 +500,43 @@ function setupAdminTab() {
   loadAdmins(); // Always refresh admin list when tab is shown
 }
 
-  // Call setupAdminTab() when the "Administrators" tab is shown
-  document.querySelectorAll('.tab-button').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      if (btn.dataset.tab === 'create-member') {
-        setupAdminTab();
-      }
-    });
+// Call setupAdminTab() when the "Administrators" tab is shown
+document.querySelectorAll('.tab-button').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    if (btn.dataset.tab === 'create-member') {
+      setupAdminTab();
+    }
   });
+});
 
-      // Format amount with ₦ and commas
-    const formatAmount = amount => `₦${parseFloat(amount).toLocaleString('en-NG', { minimumFractionDigits: 2 })}`;
+  // Format amount with ₦ and commas
+const formatAmount = amount => `₦${parseFloat(amount).toLocaleString('en-NG', { minimumFractionDigits: 2 })}`;
 
-    // Format date to DD/MM/YYYY
-    const formatDate = dateStr => {
-      const date = new Date(dateStr);
-      if (isNaN(date)) return dateStr;
-      return date.toLocaleDateString('en-GB'); // DD/MM/YYYY
-    };
+// Format date to DD/MM/YYYY
+const formatDate = dateStr => {
+  const date = new Date(dateStr);
+  if (isNaN(date)) return dateStr;
+  return date.toLocaleDateString('en-GB'); // DD/MM/YYYY
+};
 
-    // Tab navigation
-    document.querySelectorAll('.tab-button').forEach(btn => {
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active-tab'));
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+// Tab navigation
+document.querySelectorAll('.tab-button').forEach(btn => {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active-tab'));
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
 
-        this.classList.add('active-tab');
-        const tabId = this.getAttribute('data-tab');
-        const tabSection = document.getElementById(tabId);
-        if (tabSection) tabSection.classList.remove('hidden');
+    this.classList.add('active-tab');
+    const tabId = this.getAttribute('data-tab');
+    const tabSection = document.getElementById(tabId);
+    if (tabSection) tabSection.classList.remove('hidden');
 
-        // Only call setupAdminTab when admin tab is clicked
-        if (tabId === 'create-admin') setupAdminTab();
-        if (tabId === 'member-list') loadMembers();
-        if (tabId === 'ledger-entry') loadMemberLedger();
-        // ...other tab-specific loaders
-      });
-    });
+    // Only call setupAdminTab when admin tab is clicked
+    if (tabId === 'create-admin') setupAdminTab();
+    if (tabId === 'member-list') loadMembers();
+    if (tabId === 'ledger-entry') loadMemberLedger();
+    // ...other tab-specific loaders
+  });
+});
 
     // Fetch Data Sections
 function fetchTable(endpoint, targetId, renderFn) {
@@ -1313,6 +1322,42 @@ async function savePhoneNumber(e) {
   }
 }
 
+//merge phonenumber
+async function mergePhoneNumber(e) {
+  e.preventDefault();
+
+  const form = document.getElementById('phoneNumberMergingForm');
+  const firstPhone = document.getElementById('firstphoneno').value.trim();
+  const secondPhone = document.getElementById('secondPhoneNumber').value.trim();
+
+  if (!firstPhone || !secondPhone || firstPhone === secondPhone) {
+    alert("Both phone numbers must be filled and different.");
+    return;
+  }
+
+  try {
+    const res = await fetch('/admin/merge-phone', {
+      method: 'PUT',
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+      },
+      body: JSON.stringify({ firstPhone, secondPhone })
+    });
+
+    const result = await res.json();
+    alert(res.ok ? result.message : result.error);
+
+    if (res.ok) {
+      form.reset();
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert('An error occurred while merging.');
+  }
+}
+
 async function deleteMember(phone) {
   if (!confirm('Are you sure you want to delete this member?')) return;
   try {
@@ -1372,8 +1417,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (Array.isArray(data)) {
         data.forEach(item => {
           const option = document.createElement('option');
-          option.value = item.incomecode;
-          option.textContent = item.incomecode;
+          option.value = item.incomedesc;
+          option.textContent = item.incomedesc;
           remarkDropdown.appendChild(option);
         });
       }
@@ -1404,7 +1449,6 @@ document.getElementById('ledgerForm')?.addEventListener('submit', async (e) => {
     return;
   }
 
-
   try {
     const res = await fetch(`/admin/ledger-entry/${data.phoneno}`, {
       method: 'POST',
@@ -1414,15 +1458,44 @@ document.getElementById('ledgerForm')?.addEventListener('submit', async (e) => {
       },
       body: JSON.stringify(data)
     });
+    
     const result = await res.json();
-    alert(res.ok ? 'Ledger entry recorded!' : (result.message || 'Error submitting ledger entry.'));
-    if (res.ok) form.reset();
+
+    if (!res.ok) {
+      if (result.field === 'phoneno') {
+        const errorElem = document.getElementById('ledgerPhoneError');
+        if (errorElem) {
+          errorElem.textContent = result.message;
+          errorElem.style.color = 'red';
+          errorElem.style.display = 'block';
+        }
+      } else {
+        alert(result.message || 'Error submitting ledger entry.');
+      }
+      return;
+    }
+
+    // Clear error if successful
+    const errorElem = document.getElementById('ledgerPhoneError');
+    if (errorElem) errorElem.style.display = 'none';
+
+    alert('Ledger entry recorded!');
+    form.reset();
     loadMemberLedger();
+
   } catch (err) {
     console.error('Ledger Error:', err.message || err);
     alert('Server error');
   }
 });
+
+document.getElementById('phoneno')?.addEventListener('input', () => {
+  const errorElem = document.getElementById('ledgerPhoneError');
+  if (errorElem && document.getElementById('phoneno').value.trim() === '') {
+    errorElem.style.display = 'none';
+  }
+});
+
 
 // Add member ledger to (Screen D)
 async function loadMemberLedger() {
@@ -1489,6 +1562,7 @@ document.getElementById('ocdaForm')?.addEventListener('submit', async (e) => {
   const form = e.target;
   const data = {
     docdate: form.docdate.value,
+    voucher: form.voucher.value,
     project: form.project.value,
     amount: parseFloat(form.amount.value),
     remarks: form.remarks.value
@@ -1563,6 +1637,7 @@ async function loadOCDAExpenses() {
     body.innerHTML = data.map(row => `
       <tr class="border-t">
         <td class="p-2">${row.docdate?.split('T')[0]}</td>
+        <td class="p-2">${row.voucher }</td>
         <td class="p-2">${row.project}</td>
         <td class="p-2">${row.remarks}</td>
         <td class="p-2">₦${parseFloat(row.amount).toLocaleString('en-NG', { minimumFractionDigits: 2 })}</td>
@@ -1586,7 +1661,7 @@ document.getElementById('summaryForm')?.addEventListener('submit', async (e) => 
   const form = e.target;
 
   const year = form.year.value;
-  const month = form.month.value.padStart(2, '0'); // 🔒 ensure "01" not "1"
+  const month = form.month.value.padStart(2, '0'); 
 
   const data = { year, month };
 
@@ -1602,8 +1677,8 @@ document.getElementById('summaryForm')?.addEventListener('submit', async (e) => 
 
     const result = await res.json();
     alert(res.ok
-      ? `✅ Summary for ${year}-${month} generated!`
-      : (result.message || '❌ Error generating summary.'));
+      ? `Summary for ${year}-${month} generated!`
+      : (result.message || 'Error generating summary.'));
 
     if (res.ok) {
       form.reset();
@@ -1792,11 +1867,11 @@ if (mode === 'detail') {
     });
     detailHtml = Object.entries(grouped).map(([phoneno, txs]) => `
       <div class="mb-8 border border-gray-300 rounded shadow-sm">
-        <div class="font-bold text-lg bg-gray-100 px-4 py-2 cursor-pointer toggle-header" data-target="table-${phoneno}">
-        ${phoneno} - ${txs[0]?.fullname || ''}
-      </div>
+        <div class="font-bold text-lg bg-gray-100 px-4 py-2 cursor-pointer toggle-header" data-target="member-${phoneno.replace(/[^a-zA-Z0-9]/g, '_')}">
+          ${phoneno} - ${txs[0]?.fullname || ''}
+        </div>
 
-        <div id="table-${phoneno}" class="toggle-table hidden">
+        <div id="member-${phoneno.replace(/[^a-zA-Z0-9]/g, '_')}" class="toggle-table hidden">
           <table class="w-full border border-gray-400 shadow-sm" style="border-collapse: collapse;">
             <thead>
               <tr>
@@ -1818,89 +1893,128 @@ if (mode === 'detail') {
         </div>
       </div>
     `).join('');
+
   } else if (type === 'ward') {
-    detailHtml = detail.map(w => `
-      <div class="mb-8 border border-gray-300 rounded shadow">
-        <!-- Use "ward-view-" prefix -->
-        <div class="font-bold text-blue-600 text-lg bg-gray-50 px-4 py-2 cursor-pointer toggle-header"
-            data-target="ward-view-${w.ward}">
-          Ward: ${w.ward}
-        </div>
+    // For 'ward' type, calculate total amount for each member within each ward
+      const wardsWithMemberTotals = detail.map(w => {
+          // Group transactions by member within each ward to calculate individual member totals
+        const groupedMembers = {};
+        (Array.isArray(w.members) ? w.members : []).forEach(tx => {
+            if (!groupedMembers[tx.phoneno]) {
+                groupedMembers[tx.phoneno] = { phoneno: tx.phoneno, fullname: tx.fullname, totalAmount: 0 };
+            }
+            groupedMembers[tx.phoneno].totalAmount += (parseFloat(tx.amount) || 0);
+        });
+        return { ...w, members: Object.values(groupedMembers) }; // Convert grouped object back to array
+      });
 
-        <div id="ward-view-${w.ward}" class="toggle-table hidden">
-          <table class="w-full border border-gray-400" style="border-collapse: collapse;">
-            <thead>
+    detailHtml = wardsWithMemberTotals.map((w, wardIndex) => {
+        const uniqueId = `ward-${wardIndex}-${w.ward.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+    return `
+    <div class="mb-8 border border-gray-300 rounded shadow">
+      <div class="font-bold text-blue-600 text-lg bg-gray-50 px-4 py-2 cursor-pointer toggle-header"
+          data-target="${uniqueId}">
+        Ward: ${w.ward}
+      </div>
+
+      <div id="${uniqueId}" class="toggle-tables hidden">
+        <table class="w-full border border-gray-400" style="border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th class="border px-4 py-2 bg-gray-100 text-center">Phone</th>
+              <th class="border px-4 py-2 bg-gray-100 text-center">Name</th>
+              <th class="border px-4 py-2 text-center bg-gray-100">Total Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(Array.isArray(w.members) ? w.members : []).map(m => `
               <tr>
-                <th class="border px-4 py-2 bg-gray-100 text-center">Phone</th>
-                <th class="border px-4 py-2 bg-gray-100 text-center">Name</th>
-                <th class="border px-4 py-2 bg-gray-100 text-center">Date</th>
-                <th class="border px-4 py-2 bg-gray-100 text-center">Amount</th>
-                <th class="border px-4 py-2 bg-gray-100 text-center">Remark</th>
+                <td class="border px-4 py-2 text-center">${m.phoneno}</td>
+                <td class="border px-4 py-2 text-center">${m.fullname}</td>
+                <td class="border px-4 py-2 text-center">${m.totalAmount}</td>
               </tr>
-            </thead>
-            <tbody>
-              ${(Array.isArray(w.members) ? w.members : []).map(m => `
-                <tr>
-                  <td class="border px-4 py-2 text-center">${m.phoneno}</td>
-                  <td class="border px-4 py-2 text-center">${m.fullname}</td>
-                  <td class="border px-4 py-2 text-center">${m.transdate}</td>
-                  <td class="border px-4 py-2 text-center">${m.amount}</td>
-                  <td class="border px-4 py-2 text-center">${m.remark}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
+            `).join('')}
+          </tbody>
+        </table>
       </div>
-    `).join('');
+    </div>
+  `;
+    }).join('');
+
   } else if (type === 'quarter') {
-    detailHtml = detail.map(q => `
-      <div class="mb-10 border border-gray-300 rounded shadow">
-        <!-- Quarter Toggle Header -->
-        <div class="text-xl text-indigo-700 font-bold px-4 py-2 bg-gray-100 cursor-pointer toggle-header" data-target="quarter-block-${q.quarter}">
-          Quarter: ${q.quarter}
-        </div>
+    // For 'quarter' type, calculate total amount for each ward within each quarter,
+    // and also calculate member totals within those wards.
+    const quartersWithWardAndMemberTotals = detail.map(q => {
+        const wardsWithTotals = (Array.isArray(q.wards) ? q.wards : []).map(w => {
+            // Group transactions by member within each ward for individual member totals
+            const groupedMembers = {};
+            (Array.isArray(w.members) ? w.members : []).forEach(tx => {
+                if (!groupedMembers[tx.phoneno]) {
+                    groupedMembers[tx.phoneno] = { phoneno: tx.phoneno, fullname: tx.fullname, totalAmount: 0 };
+                }
+                groupedMembers[tx.phoneno].totalAmount += (parseFloat(tx.amount) || 0);
+            });
 
-        <!-- Quarter Toggle Content -->
-        <div id="quarter-block-${q.quarter}" class="toggle-table hidden">
-          ${q.wards.map(w => `
-            <div class="ml-4 mt-4 border border-gray-200 rounded">
-              <!-- Ward Toggle Header within Quarter -->
-              <div class="font-semibold text-lg text-blue-500 px-4 py-2 bg-gray-50 cursor-pointer toggle-header"
-                  data-target="quarter-${q.quarter}-ward-${w.ward}">
-                Ward: ${w.ward}
-              </div>
+            // Calculate total for all members within this ward
+            const wardTotalAmount = Object.values(groupedMembers).reduce((sum, m) => sum + m.totalAmount, 0);
 
-              <!-- Ward Table within Quarter -->
-              <div id="quarter-${q.quarter}-ward-${w.ward}" class="toggle-table hidden">
-                <table class="w-full border border-gray-400" style="border-collapse: collapse;">
-                  <thead>
-                    <tr>
-                      <th class="border px-4 py-2 bg-gray-100 text-center">Phone</th>
-                      <th class="border px-4 py-2 bg-gray-100 text-center">Name</th>
-                      <th class="border px-4 py-2 bg-gray-100 text-center">Date</th>
-                      <th class="border px-4 py-2 bg-gray-100 text-center">Amount</th>
-                      <th class="border px-4 py-2 bg-gray-100 text-center">Remark</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${(Array.isArray(w.members) ? w.members : []).map(m => `
-                      <tr>
-                        <td class="border px-4 py-2 text-center">${m.phoneno}</td>
-                        <td class="border px-4 py-2 text-center">${m.fullname}</td>
-                        <td class="border px-4 py-2 text-center">${m.transdate}</td>
-                        <td class="border px-4 py-2 text-center">${m.amount}</td>
-                        <td class="border px-4 py-2 text-center">${m.remark}</td>
-                      </tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          `).join('')}
-        </div>
+            return { ...w, members: Object.values(groupedMembers), wardTotalAmount };
+        });
+
+        // Calculate total for the entire quarter
+        const quarterTotalAmount = wardsWithTotals.reduce((sum, w) => sum + w.wardTotalAmount, 0);
+
+        return { ...q, wards: wardsWithTotals, quarterTotalAmount };
+    });
+
+    detailHtml = quartersWithWardAndMemberTotals.map((q, quarterIndex) => {
+        const quarterUniqueId = `quarter-${quarterIndex}-${q.quarter.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+        return `
+    <div class="mb-10 border border-gray-300 rounded shadow">
+      <div class="text-xl text-indigo-700 font-bold px-4 py-2 bg-gray-100 cursor-pointer toggle-header" data-target="${quarterUniqueId}">
+        Quarter: ${q.quarter}
       </div>
-    `).join('');
+
+      <div id="${quarterUniqueId}" class="">
+        ${q.wards.map((w, wardIndex) => {
+            const wardInQuarterUniqueId = `quarter-${quarterIndex}-ward-${wardIndex}-${w.ward.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+            return `
+          <div class="ml-4 mt-4 border border-gray-200 rounded">
+            <div class="font-semibold text-lg text-blue-500 px-4 py-2 bg-gray-50 cursor-pointer toggle-header"
+                data-target="${wardInQuarterUniqueId}">
+              Ward: ${w.ward} (Total: ${w.wardTotalAmount.toFixed(2)})
+            </div>
+
+            <div id="${wardInQuarterUniqueId}" class="toggle-table hidden">
+              <table class="w-full border border-gray-400" style="border-collapse: collapse;">
+                <thead>
+                  <tr>
+                    <th class="border px-4 py-2 bg-gray-100 text-center">Phone</th>
+                    <th class="border px-4 py-2 bg-gray-100 text-center">Name</th>
+                    <th class="border px-4 py-2 bg-gray-100 text-center">Total Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${(Array.isArray(w.members) ? w.members : []).map(m => `
+                    <tr>
+                      <td class="border px-4 py-2 text-center">${m.phoneno}</td>
+                      <td class="border px-4 py-2 text-center">${m.fullname}</td>
+                      <td class="border px-4 py-2 text-center">${m.totalAmount.toFixed(2)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+  }).join('');
   }
 }
 
@@ -1915,35 +2029,43 @@ if (mode === 'detail') {
     </div>
   `;
 
-  document.addEventListener('click', function (e) {
-    if (e.target.classList.contains('toggle-header')) {
-      const id = e.target.getAttribute('data-target');
-      console.log('Clicked header targeting:', id);
+// --- CONSOLIDATED TOGGLE EVENT HANDLER ---
+document.addEventListener('click', function (e) {
+  console.log('Click detected on:', e.target);
+  console.log('Classes:', e.target.classList);
+  
+  if (e.target.classList.contains('toggle-header')) {
+    e.preventDefault();
+    e.stopPropagation(); 
+    
+    const targetId = e.target.getAttribute('data-target');
+    console.log('Toggle header clicked, targeting ID:', targetId);
+    
+    // Debug: List all elements with IDs
+    const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id);
+    console.log('All available IDs in DOM:', allIds);
+    
+    const targetElement = document.getElementById(targetId);
+    
+    if (targetElement) {
+      console.log('✅ Found target element:', targetElement);
+      console.log('Current classes before toggle:', targetElement.classList.toString());
       
-      const content = document.getElementById(id);
+      targetElement.classList.toggle('hidden');
       
-      if (content) {
-        console.log(`Found element with id="${id}". Toggling visibility.`);
-        content.classList.toggle('hidden');
-      } else {
-        console.warn(`No element found with id="${id}"! Check if it exists in the DOM.`);
-        alert(`❗ Missing element with id="${id}" — maybe a typo or clash.`);
-      }
-    }
-  });
-
-  document.querySelectorAll(".ward-header").forEach(header => {
-  header.addEventListener("click", () => {
-    const targetId = header.dataset.target;
-    console.log("Clicked ward header targeting:", targetId);
-    const target = document.getElementById(targetId);
-    if (target) {
-      console.log("Found element with id:", targetId, "Toggling visibility.");
-      target.classList.toggle("hidden");
+      console.log('Classes after toggle:', targetElement.classList.toString());
+      console.log('Is hidden?', targetElement.classList.contains('hidden'));
     } else {
-      console.warn("❌ Ward element NOT FOUND:", targetId);
+      console.error('❌ Target element NOT FOUND with ID:', targetId);
+      console.error('Available IDs:', allIds);
+      
+      // Try alternative search methods
+      const byQuery = document.querySelector(`#${CSS.escape(targetId)}`);
+      console.log('Alternative query result:', byQuery);
+      
+      alert(`❗ Element with ID "${targetId}" not found!\nAvailable IDs: ${allIds.join(', ')}`);
     }
-  });
+  }
 });
 
   // Prepare hidden export table
@@ -2075,7 +2197,7 @@ function renderOCDAExpensesAnalysis(data, mode) {
   }
 }
 
-// ✅ Add this outside the render function
+// Add this outside the render function
 function toggleGroup(index) {
   const section = document.getElementById(`group-${index}`);
   if (section) section.classList.toggle('hidden');
@@ -2092,8 +2214,6 @@ function exportOCDAReportToPDF() {
     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
   }).from(element).save();
 }
-
-
 
 document.getElementById('ocdaExpensesAnalysisForm')?.addEventListener('submit', function(e) {
   e.preventDefault();
@@ -2160,8 +2280,8 @@ function renderOCDAIncomeAnalysis(data, mode) {
           <tbody>
             ${data.map(row => `
               <tr>
-                <td class="${getCellClasses()} break-words">${row.code}</td>
-                <td class="${getCellClasses()} break-words">${row.description || ''}</td>
+                <td class="${getCellClasses()} break-words">${row.code || 'No Code'}</td>
+                <td class="${getCellClasses()} break-words">${row.description?.trim() || row.code || 'N/A'}</td>
                 <td class="${getCellClasses()}">${formatAmount(row.amount)}</td>
               </tr>
             `).join('')}
@@ -2169,36 +2289,36 @@ function renderOCDAIncomeAnalysis(data, mode) {
         </table>
       </div>
     `;
-  } else {
-    // Detail: Grouped table with expand/collapse
-    tableContainer.innerHTML = data.map((group, index) => `
-      <div class="mb-4 border rounded overflow-hidden shadow">
-        <button class="w-full text-left px-4 py-2 bg-gray-100 font-bold hover:bg-gray-200 focus:outline-none" onclick="toggleIncomeGroup(${index})">
-          ${group.code} (${group.transactions.length} transactions)
-        </button>
-        <div id="income-group-${index}" class="hidden">
-          <div class="overflow-x-auto">
-            <table class="w-full border border-gray-400" style="border-collapse: collapse;">
-              <thead>
+  }else {
+  // Detail: Grouped table with expand/collapse
+  tableContainer.innerHTML = data.map((group, index) => `
+    <div class="mb-4 border rounded overflow-hidden shadow">
+      <button class="w-full text-left px-4 py-2 bg-gray-100 font-bold hover:bg-gray-200 focus:outline-none" onclick="toggleIncomeGroup(${index})">
+        ${group.code} (${group.transactions.length} transactions)
+      </button>
+      <div id="income-group-${index}" class="hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full border border-gray-400" style="border-collapse: collapse;">
+            <thead>
+              <tr>
+                <th class="border px-2 py-1 text-center bg-gray-200 whitespace-nowrap">Date</th>
+                <th class="border px-2 py-1 text-center bg-gray-200">Phone(Name)</th>
+                <th class="border px-2 py-1 text-center bg-gray-200 whitespace-nowrap">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${group.transactions.map(transaction => `
                 <tr>
-                  <th class="border px-2 py-1 text-center bg-gray-200 whitespace-nowrap">Date</th>
-                  <th class="border px-2 py-1 text-center bg-gray-200">Phone(Name)</th>
-                  <th class="border px-2 py-1 text-center bg-gray-200 whitespace-nowrap">Amount</th>
+                  <td class="border px-2 py-1 text-center whitespace-nowrap">${formatDate(transaction.date)}</td>
+                  <td class="border px-2 py-1 text-center overflow-hidden" style="word-break: break-all;">${transaction.phoneno_name}</td> <td class="border px-2 py-1 text-center whitespace-nowrap">${formatAmount(transaction.amount)}</td>
                 </tr>
-              </thead>
-              <tbody>
-                ${group.transactions.map(transaction => `
-                  <tr>
-                    <td class="border px-2 py-1 text-center whitespace-nowrap">${formatDate(transaction.date)}</td>
-                    <td class="border px-2 py-1 text-center overflow-hidden" style="word-break: break-all;">${transaction.phoneno_name}</td> <td class="border px-2 py-1 text-center whitespace-nowrap">${formatAmount(transaction.amount)}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
+              `).join('')}
+            </tbody>
+          </table>
         </div>
       </div>
-    `).join('');
+    </div>
+  `).join('');
   }
 }
 
@@ -2742,7 +2862,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const stateDropdown = document.getElementById('state');
 
   try {
-    const res = await fetch('/admin/static/states'); // Or correct path like /api/static/states
+    const res = await fetch('/admin/static/states');
 
     const contentType = res.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {

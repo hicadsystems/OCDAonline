@@ -1,10 +1,10 @@
- // Login Form Handler
+ // Login Form Handler(backup)
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   clearAllErrors();
 
 const isLocal = window.location.hostname === 'localhost';
-const BASE_URL = isLocal ? 'http://localhost:5500' : 'https://chief-prj-assign.onrender.com';
+const BASE_URL = isLocal ? 'http://localhost:5500' : 'https://oyinakokocda.org';
 
   let isValid = true;
   const identifier = document.getElementById('loginPhone').value.trim(); // ID or Phone

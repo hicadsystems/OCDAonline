@@ -6,9 +6,23 @@
   <title>User Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles/index.css">
+  <link rel="icon" type="image/png" href="/photos/favicon.ico" sizes="32x32">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <style>
+  ul li::before {
+    content: "" !important; 
+  }
+
+  .form-wrapper,
+  .container-form{
+    background: none !important;
+  }
+
+  label{
+    color: black !important;
+  }
+
   @media (max-width: 4000px) and (min-width: 1700px) {
     html {
       font-size: 122% !important;
@@ -24,6 +38,27 @@
   @media (max-width: 491px) {
     #receiptTable {
       font-size: 79% !important;
+    }
+
+    .p-4{
+      padding: 0.1rem !important;
+    }
+
+    .p-5{
+      padding: 0.1rem !important;
+    }
+
+    .p-6{
+      padding: 0.1rem !important;
+    }
+
+    .px-4 {
+      padding-right: 0.2rem !important;
+      padding-left: 0.2rem !important;
+    }
+
+    .pl-4 {
+     padding-left: 0.1rem !important; 
     }
   }
 
@@ -88,7 +123,7 @@
   <section id="landingSection" class="px-4 py-6">
     <!-- Header -->
     <div class="text-center mb-6">
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
       Welcome, <span id="username" class="text-blue-600 dark:text-blue-400"></span>
       <img src="/photos/OCDA-Logo3.png" alt="OCDA" class="mx-auto mt-4 max-w-[150px]">
     </div>
@@ -115,7 +150,6 @@
             <!-- JS will populate years -->
           </select>
         </div>
-
       </div>
 
       <div class="flex justify-between items-center" id="flex1">
@@ -137,7 +171,7 @@
 
     <!-- News & Events -->
     <div class="bg-white shadow-md rounded-xl p-5 max-w-xl mx-auto border-l-4 border-orange-500" 
-    style="margin-top: 5%; ul li::before{content: none !important;}">
+    style="margin-top: 5%;">
       <h2 class="text-xl font-semibold text-gray-800 mb-3">News & Events</h2>
       <ul id="newsList" class="list-disc pl-5 space-y-2 text-sm text-gray-600">
       </ul>
@@ -146,10 +180,10 @@
 
   <!-- profile section -->
   <section id="profileSection" class="hidden p-6 md:p-10 lg:px-16 xl:px-24 2xl:px-32">
-    <div class="max-w-6xl mx-auto space-y-6 bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 md:p-10">
+    <div class="max-w-6xl mx-auto space-y-6 bg-white rounded-lg shadow-md p-6 md:p-10">
       <div class="text-center space-y-2">
         </h1>
-        <h2 class="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-medium">My Profile</h2>
+        <h2 class="text-lg md:text-xl text-gray-600 font-medium">My Profile</h2>
       </div>
 
       <!-- Display Section -->
@@ -225,6 +259,18 @@
 
       <!-- Edit Section -->
       <form id="profileEditForm" style="display:none">
+          <!-- Row: Surname + Other Names -->
+          <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-group">
+              <label for="surname">Surname </label>
+              <input type="text" id="surname" name="Surname">
+            </div>
+            <div class="form-group">
+              <label for="otherNames">OtherNames</label>
+              <input type="text" id="othernames" name="othernames">
+            </div>
+          </div>
+
         <!-- Phone Numbers -->
         <div class="form-row">
           <div class="form-group">
@@ -345,11 +391,11 @@
       <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white">My Receipts</h2>
 
       <div class="flex flex-wrap items-center gap-4 mb-6">
-        <label class="block text-sm text-gray-700 dark:text-gray-200">
+        <label class="block text-sm text-black-700 dark:text-gray-700">
           From:
           <input type="date" id="fromDate" class="mt-1 border border-gray-300 rounded px-3 py-2 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
         </label>
-        <label class="block text-sm text-gray-700 dark:text-gray-200">
+        <label class="block text-sm text-black-700 dark:text-gray-700">
           To:
           <input type="date" id="toDate" class="mt-1 border border-gray-300 rounded px-3 py-2 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
         </label>
@@ -367,7 +413,7 @@
         </div>
       </div>
 
-      <div id="receiptTable" class="overflow-x-auto bg-white dark:bg-gray-900 rounded shadow p-4"></div>
+      <div id="receiptTable" class="overflow-x-auto bg-white rounded shadow p-4"></div>
 
       <div class="mt-6">
         <button onclick="clearReceipts()"class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-5 py-2 rounded transition">
@@ -383,22 +429,22 @@
 
       <div class="flex flex-col md:flex-row gap-4 mb-4">
         <label class="flex flex-col">
-          <span class="text-sm text-gray-600">From:</span>
+          <span class="text-sm text-black-600">From:</span>
           <input type="date" id="enquiryFrom" class="border rounded px-3 py-2">
         </label>
         <label class="flex flex-col">
-          <span class="text-sm text-gray-600">To:</span>
+          <span class="text-sm text-black-600">To:</span>
           <input type="date" id="enquiryTo" class="border rounded px-3 py-2">
         </label>
       </div>
 
     <!-- Radio Tabs -->
     <div class="flex justify-center gap-6 mb-6">
-      <label class="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+      <label class="flex items-center gap-2 text-gray-700 dark:text-gray-700">
         <input type="radio" name="filterType" value="ward" checked onchange="toggleDropdown()" class="accent-blue-600">
         <span>Ward</span>
       </label>
-      <label class="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+      <label class="flex items-center gap-2 text-gray-700 dark:text-gray-700">
         <input type="radio" name="filterType" value="quarters" onchange="toggleDropdown()" class="accent-blue-600">
         <span>Quarters</span>
       </label>
